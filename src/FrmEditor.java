@@ -37,7 +37,6 @@ public class FrmEditor extends JFrame {
     Color color;
     String nombreArchivo = "";
 
-
     public FrmEditor() {
 
         tbEditor = new JToolBar();
@@ -78,6 +77,14 @@ public class FrmEditor extends JFrame {
 
         cmbTipo.setModel(
                 new DefaultComboBoxModel(Arrays.stream(TipoTrazo.values()).map(Enum::name).toArray(String[]::new)));
+        /*
+         * String[] textos = new String[TipoTrazo.values().length];
+         * for (int i = 0; i < TipoTrazo.values().length; i++) {
+         * textos[i] = TipoTrazo.values()[i].toString();
+         * }
+         * 
+         * cmbTipo.setModel(new DefaultComboBoxModel(textos));
+         */
         tbEditor.add(cmbTipo);
 
         for (int i = 0; i < 256; i++) {
@@ -170,7 +177,7 @@ public class FrmEditor extends JFrame {
     }
 
     private void setColor() {
-        Color color = new Color(cmbColorR.getSelectedIndex(), cmbColorG.getSelectedIndex(),
+        color = new Color(cmbColorR.getSelectedIndex(), cmbColorG.getSelectedIndex(),
                 cmbColorB.getSelectedIndex());
         lblColor.setBackground(color);
     }
@@ -195,12 +202,57 @@ public class FrmEditor extends JFrame {
 
     }
 
-    private void pnlGraficaMouseClicked(MouseEvent evt) {
+    boolean dibujando = false;
+    Dibujo dibujo = new Dibujo();
 
+    private void pnlGraficaMouseClicked(MouseEvent me) {
+        if (dibujando) {
+            dibujando = false;
+            System.out.println("x1=" + x + ", y1=" + y + "x2=" + me.getX() + ", y=" + me.getY());
+            Trazo trazo = null;
+            switch (cmbTipo.getSelectedIndex()) {
+                case 0:
+                    trazo = new Linea(x, y, me.getX(), me.getY());
+                    break;
+                case 1:
+                    trazo = new Rectangulo(x, y, me.getX(), me.getY());
+                    break;
+                case 2:
+                    trazo = new Ovalo(x, y, me.getX(), me.getY());
+                    break;
+            }
+            if (trazo != null) {
+                dibujo.agregar(new Nodo(trazo, color));
+                dibujo.dibujar(pnlGrafica);
+            }
+
+        } else {
+            dibujando = true;
+            x = me.getX();
+            y = me.getY();
+            System.out.println("x=" + x + ", y=" + y);
+        }
     }
 
-    private void pnlGraficaMouseMoved(MouseEvent evt) {
-
+    private void pnlGraficaMouseMoved(MouseEvent me) {
+        if (dibujando) {
+            Trazo trazo = null;
+            switch (cmbTipo.getSelectedIndex()) {
+                case 0:
+                    trazo = new Linea(x, y, me.getX(), me.getY());
+                    break;
+                case 1:
+                    trazo = new Rectangulo(x, y, me.getX(), me.getY());
+                    break;
+                case 2:
+                    trazo = new Ovalo(x, y, me.getX(), me.getY());
+                    break;
+            }
+            if (trazo != null) {
+                dibujo.dibujar(pnlGrafica);
+                trazo.dibujar(pnlGrafica.getGraphics(), color);
+            }
+        }
     }
 
 }
