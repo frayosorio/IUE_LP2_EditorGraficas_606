@@ -1,5 +1,7 @@
 import java.awt.Color;
 
+import entidades.TrazoDTO;
+
 public class Nodo {
     private Trazo trazo;
     private Color color;
@@ -27,5 +29,9 @@ public class Nodo {
         this.color = color;
     }
 
-    
+    public TrazoDTO toDTO() {
+        return new TrazoDTO(trazo instanceof Linea ? "LINEA" : trazo instanceof Rectangulo ? "RECTANGULO" : "OVALO",
+                trazo.getX1(), trazo.getY1(), trazo.getX2(), trazo.getY2(),
+                color.getRed(), color.getGreen(), color.getBlue());
+    }
 }

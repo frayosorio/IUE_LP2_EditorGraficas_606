@@ -183,11 +183,21 @@ public class FrmEditor extends JFrame {
     }
 
     private void cargarDibujo() {
-
+        nombreArchivo = Archivo.elegirArchivo();
+        if (!nombreArchivo.equals("")) {
+            dibujo.desdeJSON(nombreArchivo);
+            dibujo.dibujar(pnlGrafica);
+        }
     }
 
     private void guardarDibujo() {
-
+        if (nombreArchivo.equals("")) {
+            nombreArchivo = Archivo.elegirArchivo();
+        }
+        if (!nombreArchivo.equals("")) {
+            dibujo.guardarJSON(nombreArchivo);
+            JOptionPane.showMessageDialog(null, "El archivo fue guardado");
+        }
     }
 
     private void seleccionarTrazo() {
