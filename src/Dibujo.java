@@ -11,6 +11,7 @@ import entidades.TrazoDTO;
 public class Dibujo {
 
     private Nodo cabeza;
+    private Nodo nodoSeleccionado;
 
     public Dibujo() {
         cabeza = null;
@@ -40,25 +41,29 @@ public class Dibujo {
         return totalNodos;
     }
 
-    public void dibujar(JPanel pnl) {
+    public void dibujar(JPanel pnl, Estado estado) {
         limpiarPanel(pnl);
         // obtener el objeto graficador
         Graphics g = pnl.getGraphics();
         // recorrer la lista
         Nodo actual = cabeza;
         while (actual != null) {
-            actual.getTrazo().dibujar(g, actual.getColor());
+            if (actual == nodoSeleccionado) {
+                actual.getTrazo().dibujar(g, actual.getColor(), estado);
+            } else {
+                actual.getTrazo().dibujar(g, actual.getColor(), Estado.TRAZANDO);
+            }
             actual = actual.siguiente;
         }
     }
 
-    public boolean guardarJSON(String nombreArchivo){
-        TrazoDTO[] trazos=new TrazoDTO[getLongitud()];
+    public boolean guardarJSON(String nombreArchivo) {
+        TrazoDTO[] trazos = new TrazoDTO[getLongitud()];
         // recorrer la lista
         Nodo actual = cabeza;
-        int fila=0;
+        int fila = 0;
         while (actual != null) {
-            trazos[fila]=actual.toDTO();
+            trazos[fila] = actual.toDTO();
             fila++;
             actual = actual.siguiente;
         }
@@ -66,26 +71,42 @@ public class Dibujo {
 
     }
 
-    public void desdeJSON(String nombreArchivo){
-        List<TrazoDTO> trazos=Archivo.leerJson(nombreArchivo,new TypeReference<List<TrazoDTO>>() {} );
-        cabeza=null;
-        for(TrazoDTO dto :trazos){
+    public void desdeJSON(String nombreArchivo) {
+        List<TrazoDTO> trazos = Archivo.leerJson(nombreArchivo, new TypeReference<List<TrazoDTO>>() {
+        });
+        cabeza = null;
+        for (TrazoDTO dto : trazos) {
             Trazo trazo = null;
             switch (TipoTrazo.valueOf(dto.getTipo())) {
                 case LINEA:
-                    trazo = new Linea(dto.getX1(), dto.getY1(),dto.getX2(),dto.getY2());
+                    trazo = new Linea(dto.getX1(), dto.getY1(), dto.getX2(), dto.getY2());
                     break;
                 case RECTANGULO:
-                    trazo = new Rectangulo(dto.getX1(), dto.getY1(),dto.getX2(),dto.getY2());
+                    trazo = new Rectangulo(dto.getX1(), dto.getY1(), dto.getX2(), dto.getY2());
                     break;
                 case OVALO:
-                    trazo = new Ovalo(dto.getX1(), dto.getY1(),dto.getX2(),dto.getY2());
+                    trazo = new Ovalo(dto.getX1(), dto.getY1(), dto.getX2(), dto.getY2());
                     break;
             }
             if (trazo != null) {
                 agregar(new Nodo(trazo, new Color(dto.getRed(), dto.getGreen(), dto.getBlue())));
             }
         }
+    }
+
+    public boolean seleccionar(int x, int y) {
+        nodoSeleccionado = null;
+        boolean seleccionado = false;
+        Nodo actual = cabeza;
+
+        while (actual != null && !seleccionado) {
+            seleccionado = actual.getTrazo().cercano(x, y);
+            if (seleccionado) {
+                nodoSeleccionado = actual;
+            }
+            actual = actual.siguiente;
+        }
+        return seleccionado;
     }
 
     // ********** Metodos Estaticos **********

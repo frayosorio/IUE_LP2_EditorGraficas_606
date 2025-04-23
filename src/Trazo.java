@@ -59,11 +59,11 @@ public abstract class Trazo {
         return Math.min(y1, y2);
     }
 
-    public abstract void dibujar(Graphics g, Color color);
+    public abstract void dibujar(Graphics g, Color color, Estado estado);
 
     public abstract boolean cercano(int x, int y);
 
-    private static int TOLERANCIA = 5;
+    public static int TOLERANCIA = 5;
 
     public static boolean esCercanoALinea(int x, int y,
             int x1, int y1,
