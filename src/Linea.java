@@ -13,4 +13,9 @@ public class Linea extends Trazo {
         g.drawLine(getX1(), getY1(), getX2(), getY2());
     }
 
+    @Override
+    public boolean cercano(int x, int y) {
+       return Trazo.esCercanoALinea(x, y, getX1(), getY1(), getX2(), getY2());
+    }
+
 }
