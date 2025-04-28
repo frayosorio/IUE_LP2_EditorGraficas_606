@@ -259,33 +259,49 @@ public class FrmEditor extends JFrame {
                 break;
             case SELECCIONANDO:
                 if (dibujo.getNodoSeleccionado() != null) {
-                    estado = Estado.SELECCIONADO;
+                    System.out.println("Boton " + me.getButton());
+
+                    if (me.getButton() == MouseEvent.BUTTON1)
+                        estado = Estado.SELECCIONADO;
+                    else if (me.getButton() == MouseEvent.BUTTON3)
+                        estado = Estado.MOVIENDO;
                 }
+                break;
+            case MOVIENDO:
+                estado = Estado.SELECCIONANDO;
+                break;
         }
     }
 
     private void pnlGraficaMouseMoved(MouseEvent me) {
-        if (estado == Estado.TRAZANDO) {
-            Trazo trazo = null;
-            switch (cmbTipo.getSelectedIndex()) {
-                case 0:
-                    trazo = new Linea(x, y, me.getX(), me.getY());
-                    break;
-                case 1:
-                    trazo = new Rectangulo(x, y, me.getX(), me.getY());
-                    break;
-                case 2:
-                    trazo = new Ovalo(x, y, me.getX(), me.getY());
-                    break;
-            }
-            if (trazo != null) {
-                dibujo.dibujar(pnlGrafica, estado);
-                trazo.dibujar(pnlGrafica.getGraphics(), color, estado);
-            }
-        } else if (estado == Estado.SELECCIONANDO) {
-            dibujo.seleccionar(me.getX(), me.getY());
+        switch (estado) {
+            case TRAZANDO:
+                Trazo trazo = null;
+                switch (cmbTipo.getSelectedIndex()) {
+                    case 0:
+                        trazo = new Linea(x, y, me.getX(), me.getY());
+                        break;
+                    case 1:
+                        trazo = new Rectangulo(x, y, me.getX(), me.getY());
+                        break;
+                    case 2:
+                        trazo = new Ovalo(x, y, me.getX(), me.getY());
+                        break;
+                }
+                if (trazo != null) {
+                    dibujo.dibujar(pnlGrafica, estado);
+                    trazo.dibujar(pnlGrafica.getGraphics(), color, estado);
+                }
+                break;
+            case SELECCIONANDO:
+                dibujo.seleccionar(me.getX(), me.getY());
 
-            dibujo.dibujar(pnlGrafica, estado);
+                dibujo.dibujar(pnlGrafica, estado);
+                break;
+            case MOVIENDO:
+                dibujo.getNodoSeleccionado().getTrazo().mover(me.getX(), me.getY());
+                dibujo.dibujar(pnlGrafica, estado);
+                break;
         }
     }
 
@@ -298,7 +314,7 @@ public class FrmEditor extends JFrame {
                 case KeyEvent.VK_DOWN:
                     dibujo.getNodoSeleccionado().getTrazo().incrementarY();
                     break;
-                    case KeyEvent.VK_LEFT:
+                case KeyEvent.VK_LEFT:
                     dibujo.getNodoSeleccionado().getTrazo().decrementarX();
                     break;
                 case KeyEvent.VK_RIGHT:

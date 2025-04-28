@@ -79,6 +79,15 @@ public abstract class Trazo {
         x2++;
     }
 
+    public void mover(int x, int y) {
+        int dx = x1 - x;
+        int dy = y1 - y;
+        x1 = x;
+        y1 = y;
+        x2 -= dx;
+        y2 -= dy;
+    }
+
     public abstract void dibujar(Graphics g, Color color, Estado estado);
 
     public abstract boolean cercano(int x, int y);
