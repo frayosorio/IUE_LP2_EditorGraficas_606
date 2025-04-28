@@ -59,6 +59,26 @@ public abstract class Trazo {
         return Math.min(y1, y2);
     }
 
+    public void decrementarY() {
+        y1--;
+        y2--;
+    }
+
+    public void incrementarY() {
+        y1++;
+        y2++;
+    }
+
+    public void decrementarX() {
+        x1--;
+        x2--;
+    }
+
+    public void incrementarX() {
+        x1++;
+        x2++;
+    }
+
     public abstract void dibujar(Graphics g, Color color, Estado estado);
 
     public abstract boolean cercano(int x, int y);
@@ -80,7 +100,7 @@ public abstract class Trazo {
         double temp = (px * px) + (py * py);
         double u = ((x - x1) * px + (y - y1) * py) / temp;
 
-        //u = u > 1 ? 1 : u < 0 ? 0 : u;
+        // u = u > 1 ? 1 : u < 0 ? 0 : u;
 
         if (u > 1)
             u = 1;

@@ -16,6 +16,8 @@ import java.awt.Dimension;
 import java.awt.Graphics;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseMotionAdapter;
 import java.awt.event.WindowAdapter;
@@ -156,6 +158,13 @@ public class FrmEditor extends JFrame {
             }
         });
 
+        pnlGrafica.addKeyListener(new KeyAdapter() {
+            public void keyPressed(KeyEvent ke) {
+                pnlGraficaKeyPressed(ke);
+            }
+        });
+        pnlGrafica.setFocusable(true);
+
         pnlGrafica.setPreferredSize(new Dimension(300, 200));
 
         getContentPane().add(tbEditor, BorderLayout.NORTH);
@@ -201,6 +210,7 @@ public class FrmEditor extends JFrame {
 
     private void seleccionarTrazo() {
         estado = Estado.SELECCIONANDO;
+        pnlGrafica.requestFocusInWindow();
     }
 
     private void eliminarTrazo() {
@@ -208,11 +218,12 @@ public class FrmEditor extends JFrame {
             dibujo.eliminar(dibujo.getNodoSeleccionado());
             dibujo.deseleccionar();
             dibujo.dibujar(pnlGrafica, Estado.NADA);
+            estado = Estado.SELECCIONANDO;
         }
     }
 
     private void dibujar() {
-
+        estado = Estado.NADA;
     }
 
     Estado estado = Estado.NADA;
@@ -274,6 +285,26 @@ public class FrmEditor extends JFrame {
         } else if (estado == Estado.SELECCIONANDO) {
             dibujo.seleccionar(me.getX(), me.getY());
 
+            dibujo.dibujar(pnlGrafica, estado);
+        }
+    }
+
+    private void pnlGraficaKeyPressed(KeyEvent ke) {
+        if (dibujo.getNodoSeleccionado() != null && estado == Estado.SELECCIONADO) {
+            switch (ke.getKeyCode()) {
+                case KeyEvent.VK_UP:
+                    dibujo.getNodoSeleccionado().getTrazo().decrementarY();
+                    break;
+                case KeyEvent.VK_DOWN:
+                    dibujo.getNodoSeleccionado().getTrazo().incrementarY();
+                    break;
+                    case KeyEvent.VK_LEFT:
+                    dibujo.getNodoSeleccionado().getTrazo().decrementarX();
+                    break;
+                case KeyEvent.VK_RIGHT:
+                    dibujo.getNodoSeleccionado().getTrazo().incrementarX();
+                    break;
+            }
             dibujo.dibujar(pnlGrafica, estado);
         }
     }
