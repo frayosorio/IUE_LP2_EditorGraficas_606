@@ -13,6 +13,10 @@ public class Dibujo {
     private Nodo cabeza;
     private Nodo nodoSeleccionado;
 
+    public Nodo getNodoSeleccionado() {
+        return nodoSeleccionado;
+    }
+
     public Dibujo() {
         cabeza = null;
     }
@@ -107,6 +111,27 @@ public class Dibujo {
             actual = actual.siguiente;
         }
         return seleccionado;
+    }
+
+    public void eliminar(Nodo nodo) {
+        Nodo anterior = null;
+        Nodo actual = cabeza;
+        while (actual != null) {
+            if (actual == nodo) {
+                if (anterior == null) {
+                    cabeza = actual.siguiente;
+                } else {
+                    anterior.siguiente = actual.siguiente;
+                }
+                return;
+            }
+            anterior = actual;
+            actual = actual.siguiente;
+        }
+    }
+
+    public void deseleccionar() {
+        nodoSeleccionado = null;
     }
 
     // ********** Metodos Estaticos **********

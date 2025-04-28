@@ -204,7 +204,11 @@ public class FrmEditor extends JFrame {
     }
 
     private void eliminarTrazo() {
-
+        if (dibujo.getNodoSeleccionado() != null) {
+            dibujo.eliminar(dibujo.getNodoSeleccionado());
+            dibujo.deseleccionar();
+            dibujo.dibujar(pnlGrafica, Estado.NADA);
+        }
     }
 
     private void dibujar() {
@@ -215,31 +219,37 @@ public class FrmEditor extends JFrame {
     Dibujo dibujo = new Dibujo();
 
     private void pnlGraficaMouseClicked(MouseEvent me) {
-        if (estado == Estado.TRAZANDO) {
-            estado = Estado.NADA;
-            System.out.println("x1=" + x + ", y1=" + y + "x2=" + me.getX() + ", y=" + me.getY());
-            Trazo trazo = null;
-            switch (cmbTipo.getSelectedIndex()) {
-                case 0:
-                    trazo = new Linea(x, y, me.getX(), me.getY());
-                    break;
-                case 1:
-                    trazo = new Rectangulo(x, y, me.getX(), me.getY());
-                    break;
-                case 2:
-                    trazo = new Ovalo(x, y, me.getX(), me.getY());
-                    break;
-            }
-            if (trazo != null) {
-                dibujo.agregar(new Nodo(trazo, color));
-                dibujo.dibujar(pnlGrafica, estado);
-            }
-
-        } else {
-            estado = Estado.TRAZANDO;
-            x = me.getX();
-            y = me.getY();
-            System.out.println("x=" + x + ", y=" + y);
+        switch (estado) {
+            case TRAZANDO:
+                estado = Estado.NADA;
+                System.out.println("x1=" + x + ", y1=" + y + "x2=" + me.getX() + ", y=" + me.getY());
+                Trazo trazo = null;
+                switch (cmbTipo.getSelectedIndex()) {
+                    case 0:
+                        trazo = new Linea(x, y, me.getX(), me.getY());
+                        break;
+                    case 1:
+                        trazo = new Rectangulo(x, y, me.getX(), me.getY());
+                        break;
+                    case 2:
+                        trazo = new Ovalo(x, y, me.getX(), me.getY());
+                        break;
+                }
+                if (trazo != null) {
+                    dibujo.agregar(new Nodo(trazo, color));
+                    dibujo.dibujar(pnlGrafica, estado);
+                }
+                break;
+            case NADA:
+                estado = Estado.TRAZANDO;
+                x = me.getX();
+                y = me.getY();
+                System.out.println("x=" + x + ", y=" + y);
+                break;
+            case SELECCIONANDO:
+                if (dibujo.getNodoSeleccionado() != null) {
+                    estado = Estado.SELECCIONADO;
+                }
         }
     }
 
